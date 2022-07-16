@@ -1,9 +1,11 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics, status, mixins
 from rest_framework.response import Response
 
 from .models import Account
+from .permissions import IsOwnerOfObject
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from .serializers import  AccountCreationSerializer, AccountDetailSerializer
 
@@ -30,7 +32,7 @@ class UserDetailView(generics.GenericAPIView):
 
     queryset = Account.objects.all()
     serializer_class = AccountDetailSerializer
-    permission_classes = ()
+    permission_classes = [IsAdminUser, IsOwnerOfObject]
 
     def get_object(self):
         return get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))

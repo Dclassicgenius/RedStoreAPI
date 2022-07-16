@@ -1,5 +1,4 @@
 
-from asyncore import read
 from .models import Product, Variation, ReviewRating, ProductGallery
 from rest_framework import serializers
 from category.serializers import CategorySerializer
@@ -7,11 +6,17 @@ from rest_flex_fields import FlexFieldsModelSerializer
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
-class VariationSerializer(serializers.ModelSerializer):
+class ProductSerializer(FlexFieldsModelSerializer):
+
     class Meta:
-        model = Variation
+        model = Product
         fields = '__all__'
         read_only_fields = ('id',)
+        expandable_fields = {
+            'category': (CategorySerializer, {'many': False}),
+        }
+    
+
 
 class ProductCreationListSerializer(serializers.ModelSerializer):
     product_name    = serializers.CharField(max_length=200, allow_blank=False)
@@ -42,7 +47,6 @@ class ProductCreationListSerializer(serializers.ModelSerializer):
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
-    # get_url = serializers.HyperlinkedModelSerializer(read_only=True)
     count_reviews = serializers.SerializerMethodField(read_only=True)
     average_review = serializers.SerializerMethodField(read_only=True)
 
@@ -66,9 +70,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    # def get_get_url(self, obj):
-    #     return obj.get_url
-
     def get_count_reviews(self, obj):
         return obj.countReview
 
@@ -76,3 +77,49 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         return obj.averageReview
 
 
+class ReviewRatingSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ReviewRating
+        fields = '__all__'
+        read_only_fields = ('id', 'ip', 'created_date', 'modified_date', 'user')
+
+        expandable_fields = {
+            'product': (ProductSerializer, {'many': False}),
+        }
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        validated_data['ip'] = self.context.get('request').META.get("REMOTE_ADDR")
+        review = ReviewRating.objects.create(**validated_data)
+        return review
+    
+
+class VariationSerializer(serializers.ModelSerializer):
+   
+    class Meta:
+        model = Variation
+        fields = '__all__'
+        read_only_fields = ('id', 'created_date', 'is_active',)
+
+        expandable_fields = {
+            'product': (ProductSerializer),
+        }
+    
+    def create(self, validated_data):
+        variation = Variation.objects.create(**validated_data)
+        return variation
+
+
+class ProductGallerySerializer(serializers.ModelSerializer):
+    images = VersatileImageFieldSerializer(
+        sizes='product_headshot'
+    )
+
+    class Meta:
+        model = ProductGallery
+        fields = '__all__'
+
+
+    
+    

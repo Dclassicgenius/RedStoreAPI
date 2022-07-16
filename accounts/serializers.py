@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from accounts.models import Account, UserProfile
 from phonenumber_field.modelfields import PhoneNumberField
+from rest_flex_fields import FlexFieldsModelSerializer
 
 class UserProfileSerializer(serializers.ModelSerializer):
  
@@ -8,6 +9,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = '__all__'
         extra_kwargs = {'user': {'read_only': True}}
+
+class AccountSerializer(FlexFieldsModelSerializer):
+    class Meta:
+        model = Account
+        fields = '__all__'
+        read_only_fields = ('id',)
+        expandable_fields = {
+            'user_profile': (UserProfileSerializer, {'many': False}),
+        }
 
 
 class AccountCreationSerializer(serializers.ModelSerializer):
