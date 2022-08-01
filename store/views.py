@@ -5,10 +5,12 @@ from .permissions import IsOwnerOfObject
 from .models import Product, ReviewRating, ProductGallery
 from .serializers import ProductCreationListSerializer, ProductDetailSerializer, ProductGallerySerializer, ReviewRatingSerializer
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 class ProductCreateListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductCreationListSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -23,7 +25,7 @@ class ProductCreateListView(generics.ListCreateAPIView):
 class ProductDetailView(generics.GenericAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
-    permission_classes = ()
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get_object(self):
         return get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))
@@ -53,6 +55,7 @@ class ProductDetailView(generics.GenericAPIView):
 class ReviewRatingCreateListView( mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = ReviewRating.objects.all()
     serializer_class = ReviewRatingSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -95,6 +98,7 @@ class ReviewRatingDetailView(generics.GenericAPIView):
 class ProductGalleryListCreateView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = ProductGallery.objects.all()
     serializer_class = ProductGallerySerializer
+    permission_classes = [IsAdminUser, IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -105,6 +109,7 @@ class ProductGalleryListCreateView(mixins.ListModelMixin, mixins.CreateModelMixi
 class ProductGalleryDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = ProductGallery.objects.all()
     serializer_class = ProductGallerySerializer
+    permission_classes = [IsAdminUser, IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)  

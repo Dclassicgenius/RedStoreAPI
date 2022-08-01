@@ -24,13 +24,17 @@ class CartItemSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id', 'product', 'cart', 'sub_total','quantity',]
+        fields = ['id', 'product', 'cart', 'sub_total','quantity', 'user',]
         read_only_fields = ['id', 'user', 'is_active', 'sub_total',]
 
         expandable_fields = {
             'product': (ProductSerializer, {'many': True}),
             'cart': (CartSerializer, {'many':False})
         }
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context.get('request').user
+        return super().create(validated_data)
 
     def get_sub_total(self, obj):
         return obj.sub_total

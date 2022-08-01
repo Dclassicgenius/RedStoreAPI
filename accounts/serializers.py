@@ -7,7 +7,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
  
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ['user', 'address', 'country', 'state', 'city', 'profile_picture']
         extra_kwargs = {'user': {'read_only': True}}
 
 class AccountSerializer(FlexFieldsModelSerializer):

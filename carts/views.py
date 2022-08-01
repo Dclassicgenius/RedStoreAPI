@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
+from accounts.permissions import IsOwnerOfObject
 
 
 from .models import Cart, CartItem
@@ -33,7 +35,7 @@ class CartListCreateView(generics.ListCreateAPIView):
 class CartItemListCreateView(generics.ListCreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-    permission_classes = []
+    permission_classes = [IsOwnerOfObject, IsAuthenticated, IsAdminUser]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

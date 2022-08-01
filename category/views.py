@@ -3,6 +3,7 @@ from rest_framework import generics, status
 from .models import Category
 from .serializers import CategorySerializer, CategoryDetailSerializer
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 
 # Create your views here.
@@ -10,7 +11,7 @@ from rest_framework.response import Response
 class CategoryCreateListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = ()
+    permission_classes = [IsAdminUser]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -27,7 +28,7 @@ class CategoryDetailView(generics.GenericAPIView):
 
     queryset = Category.objects.all()
     serializer_class = CategoryDetailSerializer
-    permission_classes = ()
+    permission_classes = [IsAdminUser]
 
     def get_object(self):
         return get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))
