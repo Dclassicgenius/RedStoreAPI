@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from accounts.models import Account
-from store.models import Product, Variation
+from store.models import Product
 
 
 
@@ -64,7 +64,6 @@ class OrderProduct(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variations = models.ManyToManyField(Variation, blank=True)
     quantity = models.IntegerField()
     product_price = models.FloatField()
     ordered = models.BooleanField(default=False)

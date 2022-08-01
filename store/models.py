@@ -43,34 +43,7 @@ class Product(models.Model):
         return count
 
     image_ppoi = PPOIField()
-
-
-class VariationManager(models.Manager):
-    def colors(self):
-        return super(VariationManager, self).filter(variation_category='color', is_active=True)
-
-    def sizes(self):
-        return super(VariationManager, self).filter(variation_category='size', is_active=True)
-
-variation_category_choice = (
-    ('color', 'color'),
-    ('size', 'size'),
-)
-
-class Variation(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variation_category = models.CharField(max_length=100, choices=variation_category_choice)
-    variation_value     = models.CharField(max_length=100)
-    # color = models.CharField(max_length=100)
-    # size = models.CharField(max_length=100)
-    is_active           = models.BooleanField(default=True)
-    created_date        = models.DateTimeField(auto_now=True)
-
-    objects = VariationManager()
-
-    def __str__(self):
-        return self.variation_value
-
+    
 
 class ReviewRating(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -89,7 +62,7 @@ class ReviewRating(models.Model):
 
 class ProductGallery(models.Model):
     product = models.ForeignKey(Product, default=None, on_delete=models.CASCADE)
-    images          = VersatileImageField('Image', upload_to='store/products', ppoi_field='image_ppoi', blank=True)
+    image  = VersatileImageField('Image', upload_to='store/products', ppoi_field='image_ppoi', blank=True)
     image_ppoi = PPOIField()
 
     # image = models.ImageField(upload_to='store/products', max_length=255)

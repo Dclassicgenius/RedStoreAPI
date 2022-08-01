@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, mixins
 from .permissions import IsOwnerOfObject
 
-from .models import Product, ReviewRating, ProductGallery, Variation
-from .serializers import ProductCreationListSerializer, ProductDetailSerializer, ProductGallerySerializer, ReviewRatingSerializer, VariationSerializer
+from .models import Product, ReviewRating, ProductGallery
+from .serializers import ProductCreationListSerializer, ProductDetailSerializer, ProductGallerySerializer, ReviewRatingSerializer
 from rest_framework.response import Response
 
 class ProductCreateListView(generics.ListCreateAPIView):
@@ -91,28 +91,6 @@ class ReviewRatingDetailView(generics.GenericAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class ProductVariationListCreateView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Variation.objects.all()
-    serializer_class = VariationSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-class ProductVariationDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-    queryset = Variation.objects.all()
-    serializer_class = VariationSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)  
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
 class ProductGalleryListCreateView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = ProductGallery.objects.all()

@@ -1,5 +1,5 @@
 
-from .models import Product, Variation, ReviewRating, ProductGallery
+from .models import Product, ReviewRating, ProductGallery
 from rest_framework import serializers
 from category.serializers import CategorySerializer
 from rest_flex_fields import FlexFieldsModelSerializer
@@ -94,22 +94,6 @@ class ReviewRatingSerializer(serializers.ModelSerializer):
         review = ReviewRating.objects.create(**validated_data)
         return review
     
-
-class VariationSerializer(serializers.ModelSerializer):
-   
-    class Meta:
-        model = Variation
-        fields = '__all__'
-        read_only_fields = ('id', 'created_date', 'is_active',)
-
-        expandable_fields = {
-            'product': (ProductSerializer),
-        }
-    
-    def create(self, validated_data):
-        variation = Variation.objects.create(**validated_data)
-        return variation
-
 
 class ProductGallerySerializer(serializers.ModelSerializer):
     images = VersatileImageFieldSerializer(
