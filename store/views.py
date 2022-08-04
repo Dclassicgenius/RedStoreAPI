@@ -6,12 +6,14 @@ from .models import Product, ReviewRating, ProductGallery
 from .serializers import ProductCreationListSerializer, ProductDetailSerializer, ProductGallerySerializer, ReviewRatingSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
 
 class ProductCreateListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductCreationListSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 
+    @swagger_auto_schema(operation_summary="Create a product")
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -29,12 +31,14 @@ class ProductDetailView(generics.GenericAPIView):
 
     def get_object(self):
         return get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))
-
+    
+    @swagger_auto_schema(operation_summary="Get a product")
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(operation_summary="Update a product")
     def put(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
@@ -42,6 +46,7 @@ class ProductDetailView(generics.GenericAPIView):
         self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(operation_summary="Delete a product")
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
@@ -57,9 +62,11 @@ class ReviewRatingCreateListView( mixins.ListModelMixin, mixins.CreateModelMixin
     serializer_class = ReviewRatingSerializer
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(operation_summary="Get review ratings")
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
+    @swagger_auto_schema(operation_summary="Create a review rating")
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -72,19 +79,22 @@ class ReviewRatingDetailView(generics.GenericAPIView):
 
     def get_object(self):
         return get_object_or_404(self.queryset, pk=self.kwargs.get('pk'))
-
+    
+    @swagger_auto_schema(operation_summary="Get a review rating")
     def get(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
+    @swagger_auto_schema(operation_summary="Update a review rating")
     def put(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
+    @swagger_auto_schema(operation_summary="Delete a review rating")
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
@@ -100,9 +110,11 @@ class ProductGalleryListCreateView(mixins.ListModelMixin, mixins.CreateModelMixi
     serializer_class = ProductGallerySerializer
     permission_classes = [IsAdminUser, IsAuthenticated]
 
+    @swagger_auto_schema(operation_summary="Get product gallery")
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-
+    
+    @swagger_auto_schema(operation_summary="Create a product gallery")
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -111,12 +123,15 @@ class ProductGalleryDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixi
     serializer_class = ProductGallerySerializer
     permission_classes = [IsAdminUser, IsAuthenticated]
 
+    @swagger_auto_schema(operation_summary="Get a product gallery")
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)  
 
+    @swagger_auto_schema(operation_summary="Update a product gallery")
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
-
+    
+    @swagger_auto_schema(operation_summary="Delete a product gallery")
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 

@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from drf_yasg.utils import swagger_auto_schema
 
 from accounts.permissions import IsOwnerOfObject
 
@@ -17,7 +18,7 @@ class CartListCreateView(generics.ListCreateAPIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-
+    @swagger_auto_schema(operation_summary="Create a cart")
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -37,6 +38,7 @@ class CartItemListCreateView(generics.ListCreateAPIView):
     serializer_class = CartItemSerializer
     permission_classes = [IsOwnerOfObject, IsAuthenticated, IsAdminUser]
 
+    @swagger_auto_schema(operation_summary="Create a cart item")
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
